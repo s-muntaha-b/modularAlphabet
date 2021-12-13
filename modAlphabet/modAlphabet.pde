@@ -1,32 +1,33 @@
-class Letter {
+LetterGenerator lg;
+String input = "abcba";
+PImage shark;
+PGraphics pg;
+
+// window sizes are ints
+int scaler = 4;
+// the scale command needs a float percentage
+float scaler_f = 1.0 / scaler;
+
+void setup() {
+  size(800, 600, P3D);
   
-  PShape s;
-  PVector position;
-  PVector[] vertices;
-  float spread = 0.2;
+  shark = loadImage("shark.jpg");
+
+  lg = new LetterGenerator(input, 0, height/2);
+
+  pg = createGraphics(width/scaler, height/scaler, P3D);
+   // this odd-looking method turns off smoothing for a sharper result when scaled
+  ((PGraphicsOpenGL)pg).textureSampling(3);
+}
+
+void draw() {
+  pg.beginDraw();
   
-  Letter(PShape _s, float x, float y) {
-    s = _s;
-    position = new PVector(x, y);
-    vertices = new PVector[s.getVertexCount()];
-  }
+  pg.background(127);
+  pg.scale(scaler_f);
+  lg.run(); 
   
-  void update() {
-    for (int i=0; i<vertices.length; i++) {
-      vertices[i] = s.getVertex(i);
-      vertices[i].add(new PVector(random(-spread, spread), random(-spread, spread)));
-      s.setVertex(i, vertices[i]);
-    }
-  }
+  pg.endDraw();
   
-  void draw() {
-    shapeMode(CENTER);
-    shape(s, position.x, position.y);
-  }
-  
-  void run() {
-    update();
-    draw();
-  }
-  
+  image(pg, 0, 0, width, height);
 }
